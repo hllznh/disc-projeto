@@ -185,6 +185,70 @@ const SPECIAL_CASES = [
   { name: 'Perfil Não Processado', desc: 'Fatores se invertem sem coerência entre os gráficos. Indica falta de entendimento do questionário ou tentativa de manipular os resultados.' },
 ];
 
+// ─── Análise de Perfil Pessoal — 32 Questions (official instrument) ──────────
+// Source: "Análise de Perfil Pessoal.pdf"
+// Each question is rated 0–5 by the respondent.
+// Scoring formula per factor (range −20 to +20):
+//   A (Dominância):  (Q3+Q8+Q19+Q31) − (Q20+Q23+Q26+Q32)
+//   B (Influência):  (Q5+Q6+Q7+Q11)  − (Q1+Q24+Q27+Q30)
+//   C (Estabilidade):(Q2+Q15+Q18+Q25)− (Q9+Q12+Q16+Q29)
+//   D (Conformidade):(Q4+Q10+Q17+Q21)− (Q13+Q14+Q22+Q28)
+
+const PERFIL_QUESTIONS = [
+  { id:1,  text:'Gosto de trabalhar sozinho',                                                   factor:'B', sign:-1 },
+  { id:2,  text:'Sou calmo, pacato e sereno',                                                   factor:'C', sign: 1 },
+  { id:3,  text:'Costumo atingir meus objetivos, não importam os obstáculos',                   factor:'A', sign: 1 },
+  { id:4,  text:'Sou meticuloso e detalhista',                                                  factor:'D', sign: 1 },
+  { id:5,  text:'Sou extrovertido e falante',                                                   factor:'B', sign: 1 },
+  { id:6,  text:'Sempre participo ativamente nas reuniões de trabalho',                         factor:'B', sign: 1 },
+  { id:7,  text:'Gosto de estar cercado de pessoas e ser o centro das atenções',                factor:'B', sign: 1 },
+  { id:8,  text:'Tomo sempre a iniciativa e sou muito impaciente',                              factor:'A', sign: 1 },
+  { id:9,  text:'Sou muito curioso. Gosto sempre de saber tudo.',                               factor:'C', sign:-1 },
+  { id:10, text:'Gosto de fazer um trabalho perfeito, não importa quanto tempo demore',         factor:'D', sign: 1 },
+  { id:11, text:'Falo pelos cotovelos, não consigo ficar calado',                               factor:'B', sign: 1 },
+  { id:12, text:'Sou extremamente ambicioso. Vou ficar rico.',                                  factor:'C', sign:-1 },
+  { id:13, text:'Estruturas muito rígidas me aborrecem, gosto da liberdade de ação',            factor:'D', sign:-1 },
+  { id:14, text:'Considero-me um indivíduo teimoso',                                            factor:'D', sign:-1 },
+  { id:15, text:'Cedo a vez ao outro sem problema',                                             factor:'C', sign: 1 },
+  { id:16, text:'Tenho coragem de me arriscar sempre',                                          factor:'C', sign:-1 },
+  { id:17, text:'Sou disciplinado e organizado',                                                factor:'D', sign: 1 },
+  { id:18, text:'Considero-me uma pessoa de índole calma e moderada',                           factor:'C', sign: 1 },
+  { id:19, text:'Aprecio desafios. Adoro competir.',                                            factor:'A', sign: 1 },
+  { id:20, text:'Penso várias vezes antes de tomar uma decisão',                                factor:'A', sign:-1 },
+  { id:21, text:'Sou uma pessoa cumpridora das regras e da política da empresa',                factor:'D', sign: 1 },
+  { id:22, text:'Sou brincalhão. Estou sempre rindo.',                                          factor:'D', sign:-1 },
+  { id:23, text:'Sou calmo e paciente.',                                                        factor:'A', sign:-1 },
+  { id:24, text:'Sou bastante reservado. Tenho poucos amigos de verdade.',                      factor:'B', sign:-1 },
+  { id:25, text:'Estou sempre em casa com a minha família',                                     factor:'C', sign: 1 },
+  { id:26, text:'Recebo bem as normas e procedimentos. Respeito as regras.',                    factor:'A', sign:-1 },
+  { id:27, text:'Sou bastante cuidadoso. Não me arrisco muito.',                                factor:'B', sign:-1 },
+  { id:28, text:'Gosto de agradar os outros e ser popular',                                     factor:'D', sign:-1 },
+  { id:29, text:'Aprecio atividades variadas, não gosto de detalhes',                           factor:'C', sign:-1 },
+  { id:30, text:'Sou calado, tímido e reservado',                                               factor:'B', sign:-1 },
+  { id:31, text:'Sou corajoso e decidido. Arrisco sempre que o prêmio for alto.',               factor:'A', sign: 1 },
+  { id:32, text:'Costumo aceitar os reveses da vida com paciência e serenidade.',               factor:'A', sign:-1 },
+];
+
+// Factor labels map: A→D, B→I, C→S, D→C
+const FACTOR_TO_DISC = { A:'D', B:'I', C:'S', D:'C' };
+
+function calcPerfilScores(answers) {
+  // answers: array of 32 values (index 0 = Q1, index 31 = Q32), each 0-5
+  const raw = { A:0, B:0, C:0, D:0 };
+  PERFIL_QUESTIONS.forEach((q, i) => {
+    const val = answers[i] ?? 0;
+    raw[q.factor] += val * q.sign;
+  });
+  // Map A/B/C/D → D/I/S/C
+  return {
+    D: raw.A,
+    I: raw.B,
+    S: raw.C,
+    C: raw.D,
+    raw,
+  };
+}
+
 // ─── Key Points ───────────────────────────────────────────────────────────────
 
 const KEY_POINTS = [
