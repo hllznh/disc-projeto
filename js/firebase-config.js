@@ -9,7 +9,7 @@
 // Enquanto não configurar, os dados ficam salvos no localStorage do navegador.
 
 const FIREBASE_CONFIG = {
-  apiKey:            "AIzaSyCrvjUoPT3QQPE7A4dYquJ1SbgUen4zZME",
+  apiKey:            "AIzaSyBAd8FECGIKJEJbd922g-4iWKjzjUx2yPw",
   authDomain:        "projeto-disc-49705.firebaseapp.com",
   projectId:         "projeto-disc-49705",
   storageBucket:     "projeto-disc-49705.firebasestorage.app",
