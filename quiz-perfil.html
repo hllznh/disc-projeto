@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Análise de Perfil Pessoal — DISC</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/storage.js"></script>
   <script src="js/data.js"></script>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -17,33 +22,79 @@
     </div>
   </nav>
 
-  <!-- Header -->
-  <div class="max-w-3xl mx-auto px-6 pt-12 pb-6 text-center">
-    <span class="inline-block bg-indigo-50 text-indigo-700 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">Instrumento oficial</span>
-    <h1 class="text-4xl font-black text-gray-900 mb-3">Análise de Perfil Pessoal</h1>
-    <p class="text-gray-500 max-w-xl mx-auto">Para cada afirmação, marque de <strong>0 a 5</strong> o quanto ela representa você no seu ambiente de trabalho.<br/>
-    <span class="text-xs text-gray-400 mt-1 block">0 = não me representa · 5 = me representa totalmente</span></p>
+  <!-- Step 1: Registration -->
+  <div id="step-register" class="max-w-lg mx-auto px-6 pt-20 pb-12">
+    <div class="text-center mb-10">
+      <span class="inline-block bg-indigo-50 text-indigo-700 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">Instrumento oficial</span>
+      <h1 class="text-4xl font-black text-gray-900 mb-3">Análise de Perfil Pessoal</h1>
+      <p class="text-gray-500">Preencha seus dados para que seu resultado fique salvo e você possa acessá-lo no futuro.</p>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+      <div class="space-y-5">
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1.5">Nome completo <span class="text-rose-500">*</span></label>
+          <input id="input-nome" type="text" placeholder="Ex: Maria Silva"
+            class="w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"/>
+          <p id="err-nome" class="text-xs text-rose-500 mt-1 hidden">Por favor, informe seu nome completo.</p>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1.5">E-mail <span class="text-rose-500">*</span></label>
+          <input id="input-email" type="email" placeholder="Ex: maria@email.com"
+            class="w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"/>
+          <p id="err-email" class="text-xs text-rose-500 mt-1 hidden">Por favor, informe um e-mail válido.</p>
+          <p class="text-xs text-gray-400 mt-1.5">Seu e-mail é usado para recuperar relatórios futuros.</p>
+        </div>
+        <button onclick="startQuiz()"
+          class="w-full bg-indigo-600 text-white py-3.5 rounded-xl font-semibold text-lg hover:bg-indigo-700 transition mt-2">
+          Começar análise →
+        </button>
+        <p class="text-center text-sm">
+          <a href="meus-relatorios.html" class="text-indigo-600 hover:underline">Ver relatórios salvos</a>
+        </p>
+      </div>
+    </div>
   </div>
 
-  <!-- Progress -->
-  <div class="max-w-3xl mx-auto px-6 mb-6">
-    <div class="flex items-center justify-between mb-1">
-      <span class="text-xs text-gray-400 font-medium">Progresso</span>
-      <span id="progress-label" class="text-xs text-gray-400 font-medium">0 / 32</span>
-    </div>
-    <div class="bg-gray-200 rounded-full h-2">
-      <div id="progress-bar" class="bg-indigo-500 h-2 rounded-full transition-all duration-300" style="width:0%"></div>
-    </div>
-  </div>
+  <!-- Step 2: Quiz -->
+  <div id="step-quiz" class="hidden">
 
-  <!-- Questions -->
-  <div class="max-w-3xl mx-auto px-6 pb-12">
-    <div id="questions-list" class="space-y-4"></div>
+    <!-- User badge -->
+    <div class="bg-indigo-50 border-b border-indigo-100 py-2">
+      <div class="max-w-3xl mx-auto px-6 flex items-center justify-between">
+        <p class="text-xs text-indigo-700">
+          Respondendo como: <strong id="badge-nome"></strong> · <span id="badge-email" class="text-indigo-500"></span>
+        </p>
+        <button onclick="changeUser()" class="text-xs text-indigo-500 hover:underline">Trocar</button>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <div class="max-w-3xl mx-auto px-6 pt-8 pb-4 text-center">
+      <h2 class="text-2xl font-black text-gray-900">Análise de Perfil Pessoal</h2>
+      <p class="text-gray-500 text-sm mt-1">Marque de <strong>0</strong> (não me representa) a <strong>5</strong> (me representa totalmente).</p>
+    </div>
+
+    <!-- Progress -->
+    <div class="max-w-3xl mx-auto px-6 mb-5">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-xs text-gray-400">Progresso</span>
+        <span id="progress-label" class="text-xs text-gray-400">0 / 32</span>
+      </div>
+      <div class="bg-gray-200 rounded-full h-2">
+        <div id="progress-bar" class="bg-indigo-500 h-2 rounded-full transition-all duration-300" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- Questions -->
+    <div class="max-w-3xl mx-auto px-6 pb-4">
+      <div id="questions-list" class="space-y-3"></div>
+    </div>
 
     <!-- Submit -->
-    <div class="mt-10 text-center">
+    <div class="max-w-3xl mx-auto px-6 pb-16 mt-6 text-center">
       <p id="submit-warning" class="text-sm text-rose-500 mb-3 hidden">Responda todas as perguntas antes de continuar.</p>
-      <button onclick="submitQuiz()"
+      <button id="btn-submit" onclick="submitQuiz()"
         class="bg-indigo-600 text-white px-10 py-4 rounded-xl text-lg font-semibold hover:bg-indigo-700 transition shadow-lg shadow-indigo-200">
         Ver meu resultado →
       </button>
@@ -51,106 +102,135 @@
   </div>
 
   <script>
-    const STORAGE_KEY = 'disc_perfil_result';
+    Storage.init();
+
+    const SESSION_KEY = 'disc_user_session';
     const answers = new Array(32).fill(null);
+    let userData = null;
+
+    // ── Step 1 ────────────────────────────────────────────────────────────────
+
+    function startQuiz() {
+      const nome  = document.getElementById('input-nome').value.trim();
+      const email = document.getElementById('input-email').value.trim();
+      let valid = true;
+
+      if (nome.length < 3) {
+        document.getElementById('err-nome').classList.remove('hidden'); valid = false;
+      } else { document.getElementById('err-nome').classList.add('hidden'); }
+
+      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      if (!emailOk) {
+        document.getElementById('err-email').classList.remove('hidden'); valid = false;
+      } else { document.getElementById('err-email').classList.add('hidden'); }
+
+      if (!valid) return;
+
+      userData = { nome, email };
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify(userData));
+      showQuiz();
+    }
+
+    function showQuiz() {
+      document.getElementById('step-register').classList.add('hidden');
+      document.getElementById('step-quiz').classList.remove('hidden');
+      document.getElementById('badge-nome').textContent = userData.nome;
+      document.getElementById('badge-email').textContent = userData.email;
+      renderQuestions();
+    }
+
+    function changeUser() {
+      sessionStorage.removeItem(SESSION_KEY);
+      userData = null;
+      document.getElementById('step-register').classList.remove('hidden');
+      document.getElementById('step-quiz').classList.add('hidden');
+    }
+
+    // ── Step 2 ────────────────────────────────────────────────────────────────
 
     function renderQuestions() {
       const list = document.getElementById('questions-list');
       list.innerHTML = PERFIL_QUESTIONS.map((q, i) => `
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5" id="q-card-${i}">
-          <div class="flex items-start gap-4">
-            <span class="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 text-gray-500 text-sm font-bold flex items-center justify-center">${q.id}</span>
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4" id="q-card-${i}">
+          <div class="flex items-start gap-3">
+            <span class="flex-shrink-0 w-7 h-7 rounded-full bg-gray-100 text-gray-500 text-xs font-bold flex items-center justify-center mt-0.5">${q.id}</span>
             <div class="flex-1">
-              <p class="text-gray-800 font-medium mb-4">${q.text}</p>
-              <div class="flex items-center gap-1 flex-wrap">
-                <span class="text-xs text-gray-400 mr-1">Nada</span>
+              <p class="text-gray-800 font-medium mb-3 text-sm leading-relaxed">${q.text}</p>
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="text-xs text-gray-400 mr-1">0 · Nada</span>
                 ${[0,1,2,3,4,5].map(v => `
-                  <button
-                    onclick="setAnswer(${i}, ${v})"
-                    id="q${i}-v${v}"
-                    class="score-btn w-10 h-10 rounded-xl border-2 border-gray-200 text-sm font-bold text-gray-500
-                           hover:border-indigo-400 hover:text-indigo-600 transition-all">
-                    ${v}
-                  </button>`).join('')}
-                <span class="text-xs text-gray-400 ml-1">Totalmente</span>
+                  <button onclick="setAnswer(${i}, ${v})" id="q${i}-v${v}"
+                    class="score-btn w-9 h-9 rounded-xl border-2 border-gray-200 text-sm font-bold text-gray-500
+                           hover:border-indigo-400 hover:text-indigo-600 transition-all">${v}</button>`
+                ).join('')}
+                <span class="text-xs text-gray-400 ml-1">5 · Totalmente</span>
               </div>
             </div>
           </div>
         </div>`).join('');
     }
 
-    function setAnswer(qIndex, value) {
-      answers[qIndex] = value;
-
-      // Update button styles for this question
+    function setAnswer(idx, value) {
+      answers[idx] = value;
       for (let v = 0; v <= 5; v++) {
-        const btn = document.getElementById(`q${qIndex}-v${v}`);
+        const btn = document.getElementById(`q${idx}-v${v}`);
         if (!btn) continue;
-        if (v === value) {
-          btn.className = 'score-btn w-10 h-10 rounded-xl border-2 border-indigo-500 bg-indigo-500 text-white text-sm font-bold transition-all';
-        } else {
-          btn.className = 'score-btn w-10 h-10 rounded-xl border-2 border-gray-200 text-sm font-bold text-gray-500 hover:border-indigo-400 hover:text-indigo-600 transition-all';
-        }
+        btn.className = v === value
+          ? 'score-btn w-9 h-9 rounded-xl border-2 border-indigo-500 bg-indigo-500 text-white text-sm font-bold transition-all'
+          : 'score-btn w-9 h-9 rounded-xl border-2 border-gray-200 text-sm font-bold text-gray-500 hover:border-indigo-400 hover:text-indigo-600 transition-all';
       }
-
-      // Update card border
-      const card = document.getElementById(`q-card-${qIndex}`);
-      if (card) card.classList.add('border-indigo-100');
-
+      const card = document.getElementById(`q-card-${idx}`);
+      if (card) card.classList.replace('border-gray-100', 'border-indigo-100');
       updateProgress();
     }
 
     function updateProgress() {
-      const answered = answers.filter(a => a !== null).length;
-      const pct = Math.round((answered / 32) * 100);
-      document.getElementById('progress-bar').style.width = pct + '%';
-      document.getElementById('progress-label').textContent = `${answered} / 32`;
+      const done = answers.filter(a => a !== null).length;
+      document.getElementById('progress-bar').style.width = Math.round((done/32)*100) + '%';
+      document.getElementById('progress-label').textContent = `${done} / 32`;
     }
 
-    function submitQuiz() {
-      const unanswered = answers.map((a, i) => a === null ? i : null).filter(i => i !== null);
-
+    async function submitQuiz() {
+      const unanswered = answers.map((a,i) => a === null ? i : null).filter(i => i !== null);
       if (unanswered.length > 0) {
         document.getElementById('submit-warning').classList.remove('hidden');
-        // Scroll to first unanswered
-        const firstCard = document.getElementById(`q-card-${unanswered[0]}`);
-        if (firstCard) {
-          firstCard.classList.add('border-rose-300');
-          firstCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
+        document.getElementById(`q-card-${unanswered[0]}`).scrollIntoView({ behavior:'smooth', block:'center' });
         return;
       }
-
       document.getElementById('submit-warning').classList.add('hidden');
+
+      const btn = document.getElementById('btn-submit');
+      btn.disabled = true;
+      btn.textContent = 'Salvando...';
+
       const scores = calcPerfilScores(answers);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ answers, scores, completed: true, date: new Date().toISOString() }));
-      window.location.href = 'resultado-perfil.html';
+      const dominant = ['D','I','S','C'].filter(k => scores[k] === Math.max(scores.D, scores.I, scores.S, scores.C));
+
+      const record = await Storage.save({
+        nome: userData.nome,
+        email: userData.email,
+        scores,
+        answers: [...answers],
+        dominant,
+        quizType: 'perfil-oficial',
+      });
+
+      // Keep current session result for quick access
+      localStorage.setItem('disc_perfil_result', JSON.stringify({ ...record, completed: true }));
+
+      window.location.href = `resultado-perfil.html?id=${record.id}`;
     }
+
+    // ── Init ──────────────────────────────────────────────────────────────────
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Check if already done
-      const saved = localStorage.getItem(STORAGE_KEY);
+      const saved = sessionStorage.getItem(SESSION_KEY);
       if (saved) {
-        const data = JSON.parse(saved);
-        if (data.completed) {
-          document.getElementById('questions-list').innerHTML = `
-            <div class="text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm">
-              <p class="text-2xl font-bold text-gray-800 mb-3">Você já realizou esta análise!</p>
-              <p class="text-gray-500 mb-8">Seu perfil está salvo.</p>
-              <a href="resultado-perfil.html" class="inline-block bg-indigo-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-indigo-700 transition mr-3">Ver Resultado</a>
-              <button onclick="resetPerfil()" class="inline-block border border-gray-300 text-gray-600 px-8 py-3 rounded-xl font-semibold hover:bg-gray-50 transition">Refazer</button>
-            </div>`;
-          document.querySelector('.mt-10').classList.add('hidden');
-          return;
-        }
+        userData = JSON.parse(saved);
+        document.getElementById('input-nome').value  = userData.nome;
+        document.getElementById('input-email').value = userData.email;
       }
-      renderQuestions();
     });
-
-    function resetPerfil() {
-      localStorage.removeItem(STORAGE_KEY);
-      location.reload();
-    }
   </script>
 </body>
 </html>

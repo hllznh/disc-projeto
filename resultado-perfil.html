@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Resultado — Análise de Perfil DISC</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/storage.js"></script>
   <script src="js/data.js"></script>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -13,7 +18,10 @@
   <nav class="bg-white border-b border-gray-100 sticky top-0 z-50">
     <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
       <a href="index.html" class="font-black text-2xl tracking-tight text-gray-900">DISC</a>
-      <button onclick="reset()" class="text-sm text-gray-500 hover:text-gray-800 transition">Refazer análise</button>
+      <div class="flex items-center gap-4">
+        <a href="meus-relatorios.html" class="text-sm text-indigo-600 hover:underline">Meus relatórios</a>
+        <button onclick="reset()" class="text-sm text-gray-500 hover:text-gray-800 transition">Refazer análise</button>
+      </div>
     </div>
   </nav>
 
@@ -26,6 +34,8 @@
   </footer>
 
   <script>
+    Storage.init();
+
     const STORAGE_KEY = 'disc_perfil_result';
 
     const COLOR = {
@@ -54,19 +64,31 @@
       window.location.href = 'quiz-perfil.html';
     }
 
-    function render() {
-      const raw = localStorage.getItem(STORAGE_KEY);
+    async function render() {
       const root = document.getElementById('result-root');
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
 
-      if (!raw) {
+      let data = null;
+
+      if (id) {
+        data = await Storage.getById(id);
+        // Also cache locally for quick refresh
+        if (data) localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...data, completed: true }));
+      }
+
+      if (!data) {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) data = JSON.parse(raw);
+      }
+
+      if (!data) {
         root.innerHTML = `<div class="text-center py-20">
           <p class="text-gray-500 text-lg mb-6">Você ainda não realizou a análise.</p>
           <a href="quiz-perfil.html" class="bg-indigo-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-indigo-700 transition">Fazer a Análise</a>
         </div>`;
         return;
       }
-
-      const data = JSON.parse(raw);
       const scores = data.scores; // { D, I, S, C }
       const dominant = dominantProfiles(scores);
       const domLetter = dominant[0];
@@ -268,7 +290,7 @@
       }).join('');
     }
 
-    document.addEventListener('DOMContentLoaded', render);
+    document.addEventListener('DOMContentLoaded', () => render());
   </script>
 </body>
 </html>
