@@ -69,9 +69,10 @@ const Storage = (() => {
     if (_ready) {
       const snap = await _db.collection(COLLECTION)
         .where('email', '==', e)
-        .orderBy('createdAt', 'desc')
         .get();
-      return snap.docs.map(d => ({ _firestoreId: d.id, ...d.data() }));
+      return snap.docs
+        .map(d => ({ _firestoreId: d.id, ...d.data() }))
+        .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
     }
     return localByEmail(e);
   }
