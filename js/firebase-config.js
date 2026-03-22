@@ -9,10 +9,10 @@
 // Enquanto não configurar, os dados ficam salvos no localStorage do navegador.
 
 const FIREBASE_CONFIG = {
-  apiKey:            "YOUR_API_KEY",
-  authDomain:        "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId:         "YOUR_PROJECT_ID",
-  storageBucket:     "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId:             "YOUR_APP_ID",
+  apiKey:            "AIzaSyCrvjUoPT3QQPE7A4dYquJ1SbgUen4zZME",
+  authDomain:        "projeto-disc-49705.firebaseapp.com",
+  projectId:         "projeto-disc-49705",
+  storageBucket:     "projeto-disc-49705.firebasestorage.app",
+  messagingSenderId: "76614615405",
+  appId:             "1:76614615405:web:e031a1466ff74428d65a64",
 };
