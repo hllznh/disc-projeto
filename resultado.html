@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Seu Resultado DISC</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/data.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- Nav -->
+  <nav class="bg-white border-b border-gray-100 sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="index.html" class="font-black text-2xl tracking-tight text-gray-900">DISC</a>
+      <button onclick="resetAndRetake()" class="text-sm text-gray-500 hover:text-gray-800 transition">Refazer quiz</button>
+    </div>
+  </nav>
+
+  <div class="max-w-3xl mx-auto px-6 py-12" id="result-root">
+    <p class="text-center text-gray-400">Carregando seu resultado...</p>
+  </div>
+
+  <footer class="border-t border-gray-100 py-8 text-center text-sm text-gray-400 mt-8">
+    Baseado no material <em>Talento para a Vida</em> — Jorge Matos e Vânia Portela
+  </footer>
+
+  <script>
+    const COLOR = {
+      D: { bg:'bg-red-500',   light:'bg-red-50',   text:'text-red-600',   border:'border-red-400',   hex:'#DC2626' },
+      I: { bg:'bg-amber-500', light:'bg-amber-50', text:'text-amber-600', border:'border-amber-400', hex:'#D97706' },
+      S: { bg:'bg-green-500', light:'bg-green-50', text:'text-green-600', border:'border-green-400', hex:'#16A34A' },
+      C: { bg:'bg-blue-500',  light:'bg-blue-50',  text:'text-blue-600',  border:'border-blue-400',  hex:'#2563EB' },
+    };
+
+    function resetAndRetake() {
+      localStorage.removeItem('disc_quiz_result');
+      window.location.href = 'quiz.html';
+    }
+
+    function render() {
+      const raw = localStorage.getItem('disc_quiz_result');
+      const root = document.getElementById('result-root');
+
+      if (!raw) {
+        root.innerHTML = `<div class="text-center py-20">
+          <p class="text-gray-500 text-lg mb-6">Você ainda não realizou o quiz.</p>
+          <a href="quiz.html" class="bg-indigo-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-indigo-700 transition">Fazer o Quiz</a>
+        </div>`;
+        return;
+      }
+
+      const data = JSON.parse(raw);
+      const dom = data.dominant[0];
+      const profile = DISC_PROFILES[dom];
+      const c = COLOR[dom];
+      const talent = data.talent ? TALENTS.find(t => t.id === data.talent) : null;
+
+      root.innerHTML = `
+
+        <!-- Header -->
+        <div class="text-center mb-10">
+          <p class="text-xs uppercase tracking-widest text-gray-400 font-semibold mb-3">Seu perfil DISC</p>
+          <div class="inline-flex items-center justify-center w-24 h-24 ${c.bg} rounded-2xl shadow-lg mb-4">
+            <span class="text-5xl font-black text-white">${dom}</span>
+          </div>
+          <h1 class="text-4xl font-black text-gray-900">${profile.name}</h1>
+          <p class="text-gray-500 mt-3 max-w-xl mx-auto">${profile.description}</p>
+          ${data.dominant.length > 1 ? `<p class="text-sm text-gray-400 mt-2">Perfis secundários: ${data.dominant.slice(1).join(', ')}</p>` : ''}
+        </div>
+
+        <!-- Chart -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-6">
+          <h2 class="font-bold text-gray-800 mb-6">Seu gráfico de perfil</h2>
+          <div class="flex items-end justify-around gap-4 h-40">
+            ${['D','I','S','C'].map(l => {
+              const pct = data.pct[l];
+              const cc = COLOR[l];
+              return `<div class="flex flex-col items-center gap-2 flex-1">
+                <span class="text-xs font-bold ${cc.text}">${pct}%</span>
+                <div class="w-full ${cc.bg} rounded-t-lg transition-all" style="height:${Math.max(pct,8)}%"></div>
+                <span class="text-sm font-black ${cc.text}">${l}</span>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>
+
+        <!-- Two columns: traits + motivations -->
+        <div class="grid md:grid-cols-2 gap-6 mb-6">
+
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h2 class="font-bold text-gray-800 mb-4">✅ Características positivas</h2>
+            <ul class="space-y-2">
+              ${profile.traits.map(t => `<li class="flex items-center gap-2 text-sm text-gray-700"><span class="${c.text} font-bold">•</span>${t}</li>`).join('')}
+            </ul>
+          </div>
+
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h2 class="font-bold text-gray-800 mb-4">🚀 O que te motiva</h2>
+            <ul class="space-y-2">
+              ${profile.motivations.map(m => `<li class="flex items-center gap-2 text-sm text-gray-700"><span class="${c.text} font-bold">•</span>${m}</li>`).join('')}
+            </ul>
+          </div>
+
+        </div>
+
+        <!-- Fear -->
+        <div class="${c.light} rounded-2xl p-6 mb-6 border ${c.border}">
+          <h2 class="font-bold ${c.text} mb-2">⚠️ Medo básico</h2>
+          <p class="text-gray-700">${profile.basicFear}</p>
+        </div>
+
+        <!-- Develop / Resize -->
+        <div class="grid md:grid-cols-2 gap-6 mb-6">
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h2 class="font-bold text-gray-800 mb-4">📈 O que desenvolver</h2>
+            <ul class="space-y-2">
+              ${profile.develop.map(d => `<li class="text-sm text-gray-700 flex gap-2"><span class="text-green-500">↑</span>${d}</li>`).join('')}
+            </ul>
+          </div>
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h2 class="font-bold text-gray-800 mb-4">⚖️ O que redimensionar</h2>
+            <ul class="space-y-2">
+              ${profile.resize.map(r => `<li class="text-sm text-gray-700 flex gap-2"><span class="text-blue-500">↔</span>${r}</li>`).join('')}
+            </ul>
+          </div>
+        </div>
+
+        <!-- Talent match -->
+        ${talent ? `
+        <div class="bg-gray-900 text-white rounded-2xl p-6 mb-6">
+          <p class="text-xs uppercase tracking-widest text-gray-400 font-semibold mb-2">Talento natural compatível</p>
+          <h2 class="text-2xl font-black mb-1">${talent.name}</h2>
+          <p class="text-gray-300 mb-4">${talent.summary}</p>
+          <div class="flex flex-wrap gap-2">
+            ${talent.traits.map(t => `<span class="bg-white/10 text-sm px-3 py-1 rounded-full">${t}</span>`).join('')}
+          </div>
+        </div>` : ''}
+
+        <!-- Leadership -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+          <h2 class="font-bold text-gray-800 mb-4">🎯 Como me liderar melhor</h2>
+          <p class="text-sm text-gray-500 mb-3"><strong>Gestor ideal:</strong> ${profile.idealLeader}</p>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <p class="text-xs font-bold uppercase tracking-wider text-green-600 mb-2">Fazer</p>
+              <ul class="space-y-1">${profile.leaderDo.map(d => `<li class="text-sm text-gray-700 flex gap-2"><span class="text-green-400">✓</span>${d}</li>`).join('')}</ul>
+            </div>
+            <div>
+              <p class="text-xs font-bold uppercase tracking-wider text-red-500 mb-2">Não fazer</p>
+              <ul class="space-y-1">${profile.leaderDont.map(d => `<li class="text-sm text-gray-700 flex gap-2"><span class="text-red-400">✗</span>${d}</li>`).join('')}</ul>
+            </div>
+          </div>
+          <div class="mt-4 pt-4 border-t border-gray-100">
+            <p class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Preciso aprender</p>
+            <ul class="space-y-1">${profile.mustLearn.map(m => `<li class="text-sm text-gray-700 flex gap-2"><span class="text-indigo-400">→</span>${m}</li>`).join('')}</ul>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="flex flex-col sm:flex-row gap-3 justify-center mt-8">
+          <a href="perfis.html#${dom}" class="text-center ${c.bg} text-white px-8 py-3 rounded-xl font-semibold hover:opacity-90 transition">Ver perfil completo</a>
+          <a href="talentos.html" class="text-center border border-gray-200 bg-white text-gray-700 px-8 py-3 rounded-xl font-semibold hover:bg-gray-50 transition">Ver 40 talentos</a>
+          <button onclick="resetAndRetake()" class="text-center border border-gray-200 bg-white text-gray-500 px-8 py-3 rounded-xl font-semibold hover:bg-gray-50 transition">Refazer quiz</button>
+        </div>
+      `;
+    }
+
+    document.addEventListener('DOMContentLoaded', render);
+  </script>
+</body>
+</html>

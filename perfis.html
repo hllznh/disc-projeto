@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Os 4 Perfis DISC</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/data.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- Nav -->
+  <nav class="bg-white border-b border-gray-100 sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="index.html" class="font-black text-2xl tracking-tight text-gray-900">DISC</a>
+      <div class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
+        <a href="perfis.html"    class="text-indigo-600 font-semibold">Perfis</a>
+        <a href="talentos.html"  class="hover:text-indigo-600 transition">40 Talentos</a>
+        <a href="lideranca.html" class="hover:text-indigo-600 transition">Liderança</a>
+        <a href="quiz.html" class="bg-indigo-600 text-white px-5 py-2 rounded-full hover:bg-indigo-700 transition">Fazer Quiz</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Profile Tabs -->
+  <div class="bg-white border-b border-gray-100 sticky top-16 z-40">
+    <div class="max-w-6xl mx-auto px-6 flex gap-2 overflow-x-auto py-2">
+      ${['D','I','S','C'].map((l,i) => {
+        const colors = {D:'red',I:'amber',S:'green',C:'blue'};
+        const names = {D:'Dominância',I:'Influência',S:'Estabilidade',C:'Conformidade'};
+        const c = colors[l];
+        return `<a href="#${l}" class="flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-${c}-50 text-${c}-700 hover:bg-${c}-100 transition">
+          <span class="font-black">${l}</span> ${names[l]}
+        </a>`;
+      }).join('')}
+    </div>
+  </div>
+
+  <div class="max-w-4xl mx-auto px-6 py-12" id="profiles-root"></div>
+
+  <!-- Comparison Table -->
+  <section class="max-w-4xl mx-auto px-6 pb-16">
+    <h2 class="text-2xl font-black text-gray-900 mb-6">Tabela comparativa</h2>
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="bg-gray-50">
+            <th class="text-left p-4 font-semibold text-gray-500">Atributo</th>
+            <th class="p-4 font-black text-red-600">D</th>
+            <th class="p-4 font-black text-amber-600">I</th>
+            <th class="p-4 font-black text-green-600">S</th>
+            <th class="p-4 font-black text-blue-600">C</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Special Cases -->
+  <section class="max-w-4xl mx-auto px-6 pb-16">
+    <h2 class="text-2xl font-black text-gray-900 mb-6">Casos especiais de perfil</h2>
+    <div class="grid md:grid-cols-2 gap-4" id="special-cases"></div>
+  </section>
+
+  <footer class="border-t border-gray-100 py-8 text-center text-sm text-gray-400">
+    Baseado no material <em>Talento para a Vida</em> — Jorge Matos e Vânia Portela
+  </footer>
+
+  <script>
+    const COLOR_CLASS = {
+      D: { bg:'bg-red-500',   light:'bg-red-50',   text:'text-red-600',   border:'border-red-200',   ring:'ring-red-400'   },
+      I: { bg:'bg-amber-500', light:'bg-amber-50', text:'text-amber-600', border:'border-amber-200', ring:'ring-amber-400' },
+      S: { bg:'bg-green-500', light:'bg-green-50', text:'text-green-600', border:'border-green-200', ring:'ring-green-400' },
+      C: { bg:'bg-blue-500',  light:'bg-blue-50',  text:'text-blue-600',  border:'border-blue-200',  ring:'ring-blue-400'  },
+    };
+
+    function renderProfiles() {
+      const root = document.getElementById('profiles-root');
+      root.innerHTML = Object.values(DISC_PROFILES).map(p => {
+        const c = COLOR_CLASS[p.letter];
+        return `
+        <section id="${p.letter}" class="mb-16 scroll-mt-32">
+          <!-- Header -->
+          <div class="flex items-center gap-5 mb-6">
+            <div class="w-16 h-16 ${c.bg} rounded-2xl flex items-center justify-center shadow-md flex-shrink-0">
+              <span class="text-4xl font-black text-white">${p.letter}</span>
+            </div>
+            <div>
+              <h2 class="text-3xl font-black text-gray-900">${p.name}</h2>
+              <p class="text-gray-500 text-sm">Elemento: ${p.element} · Humor: ${p.humour} · Jung: ${p.jung}</p>
+            </div>
+          </div>
+
+          <p class="text-gray-600 mb-6">${p.description}</p>
+
+          <div class="grid md:grid-cols-2 gap-4 mb-4">
+            <!-- Traits -->
+            <div class="bg-white rounded-xl border ${c.border} p-5">
+              <p class="text-xs font-bold uppercase tracking-wider ${c.text} mb-3">Características</p>
+              <div class="flex flex-wrap gap-2">
+                ${p.traits.map(t => `<span class="${c.light} ${c.text} text-xs px-2 py-1 rounded-full font-medium">${t}</span>`).join('')}
+              </div>
+            </div>
+            <!-- Weaknesses -->
+            <div class="bg-white rounded-xl border ${c.border} p-5">
+              <p class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Pontos de atenção</p>
+              <div class="flex flex-wrap gap-2">
+                ${p.weaknesses.map(w => `<span class="bg-gray-50 text-gray-600 text-xs px-2 py-1 rounded-full font-medium">${w}</span>`).join('')}
+              </div>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-4 mb-4">
+            <div class="bg-white rounded-xl border ${c.border} p-5">
+              <p class="text-xs font-bold uppercase tracking-wider ${c.text} mb-3">Motivações</p>
+              <ul class="space-y-1">${p.motivations.map(m => `<li class="text-xs text-gray-600 flex gap-1.5"><span class="${c.text}">•</span>${m}</li>`).join('')}</ul>
+            </div>
+            <div class="bg-white rounded-xl border ${c.border} p-5">
+              <p class="text-xs font-bold uppercase tracking-wider text-green-600 mb-3">Desenvolver</p>
+              <ul class="space-y-1">${p.develop.map(d => `<li class="text-xs text-gray-600 flex gap-1.5"><span class="text-green-500">↑</span>${d}</li>`).join('')}</ul>
+            </div>
+            <div class="bg-white rounded-xl border ${c.border} p-5">
+              <p class="text-xs font-bold uppercase tracking-wider text-blue-600 mb-3">Redimensionar</p>
+              <ul class="space-y-1">${p.resize.map(r => `<li class="text-xs text-gray-600 flex gap-1.5"><span class="text-blue-500">↔</span>${r}</li>`).join('')}</ul>
+            </div>
+          </div>
+
+          <!-- Fear + Emotion -->
+          <div class="grid md:grid-cols-2 gap-4">
+            <div class="${c.light} rounded-xl p-4 border ${c.border}">
+              <p class="text-xs font-bold uppercase tracking-wider ${c.text} mb-1">Medo básico</p>
+              <p class="text-sm text-gray-700">${p.basicFear}</p>
+            </div>
+            <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+              <p class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">Emoção predominante</p>
+              <p class="text-sm text-gray-700">${p.emotion}</p>
+            </div>
+          </div>
+        </section>`;
+      }).join('');
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('table-body');
+      const labels = { emotion:'Emoção', need:'Necessidade', goal:'Objetivo', fear:'Medo' };
+      tbody.innerHTML = Object.entries(DISC_TABLE).map(([key, vals], i) => `
+        <tr class="${i%2===0?'bg-white':'bg-gray-50'}">
+          <td class="p-4 font-medium text-gray-600">${labels[key]}</td>
+          <td class="p-4 text-center text-gray-700">${vals.D}</td>
+          <td class="p-4 text-center text-gray-700">${vals.I}</td>
+          <td class="p-4 text-center text-gray-700">${vals.S}</td>
+          <td class="p-4 text-center text-gray-700">${vals.C}</td>
+        </tr>`).join('');
+    }
+
+    function renderSpecial() {
+      const el = document.getElementById('special-cases');
+      el.innerHTML = SPECIAL_CASES.map(s => `
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+          <h3 class="font-bold text-gray-900 mb-2">${s.name}</h3>
+          <p class="text-sm text-gray-500">${s.desc}</p>
+        </div>`).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderProfiles();
+      renderTable();
+      renderSpecial();
+      // scroll to hash
+      if (location.hash) {
+        setTimeout(() => document.querySelector(location.hash)?.scrollIntoView({ behavior:'smooth' }), 200);
+      }
+    });
+  </script>
+</body>
+</html>

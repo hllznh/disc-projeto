@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DISC — Descubra seu Perfil</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/data.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- Nav -->
+  <nav class="bg-white border-b border-gray-100 sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="index.html" class="font-black text-2xl tracking-tight text-gray-900">DISC</a>
+      <div class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
+        <a href="perfis.html"      class="hover:text-indigo-600 transition">Perfis</a>
+        <a href="talentos.html"    class="hover:text-indigo-600 transition">40 Talentos</a>
+        <a href="lideranca.html"   class="hover:text-indigo-600 transition">Liderança</a>
+        <a href="quiz.html" class="bg-indigo-600 text-white px-5 py-2 rounded-full hover:bg-indigo-700 transition">Fazer Quiz</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="max-w-6xl mx-auto px-6 pt-20 pb-16 text-center">
+    <span class="inline-block bg-indigo-50 text-indigo-700 text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full mb-6">Formação de Coaches</span>
+    <h1 class="text-5xl md:text-6xl font-black text-gray-900 leading-tight mb-6">
+      Descubra seu<br/><span class="text-indigo-600">perfil comportamental</span>
+    </h1>
+    <p class="text-xl text-gray-500 max-w-2xl mx-auto mb-10">
+      A metodologia DISC revela como você age, o que te motiva e como potencializar seus talentos naturais.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="quiz.html" class="bg-indigo-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-indigo-700 transition shadow-lg shadow-indigo-200">
+        Descobrir meu perfil →
+      </a>
+      <a href="perfis.html" class="border border-gray-200 bg-white text-gray-700 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-gray-50 transition">
+        Explorar os perfis
+      </a>
+    </div>
+  </section>
+
+  <!-- 4 Profile Cards -->
+  <section class="max-w-6xl mx-auto px-6 pb-20">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+      <!-- D -->
+      <a href="perfis.html#D" class="group bg-white rounded-2xl p-6 border-2 border-transparent hover:border-red-400 shadow-sm hover:shadow-md transition-all cursor-pointer">
+        <div class="w-14 h-14 bg-red-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-red-500 transition">
+          <span class="text-3xl font-black text-red-500 group-hover:text-white transition">D</span>
+        </div>
+        <h3 class="font-bold text-gray-900 text-lg mb-1">Dominância</h3>
+        <p class="text-gray-500 text-sm mb-4">Orientado a resultados, direto, assertivo e competitivo.</p>
+        <div class="flex flex-wrap gap-1">
+          <span class="bg-red-50 text-red-600 text-xs px-2 py-0.5 rounded-full">Resultados</span>
+          <span class="bg-red-50 text-red-600 text-xs px-2 py-0.5 rounded-full">Desafio</span>
+          <span class="bg-red-50 text-red-600 text-xs px-2 py-0.5 rounded-full">Autonomia</span>
+        </div>
+      </a>
+
+      <!-- I -->
+      <a href="perfis.html#I" class="group bg-white rounded-2xl p-6 border-2 border-transparent hover:border-amber-400 shadow-sm hover:shadow-md transition-all cursor-pointer">
+        <div class="w-14 h-14 bg-amber-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-amber-500 transition">
+          <span class="text-3xl font-black text-amber-500 group-hover:text-white transition">I</span>
+        </div>
+        <h3 class="font-bold text-gray-900 text-lg mb-1">Influência</h3>
+        <p class="text-gray-500 text-sm mb-4">Comunicativo, entusiasta, persuasivo e orientado a pessoas.</p>
+        <div class="flex flex-wrap gap-1">
+          <span class="bg-amber-50 text-amber-600 text-xs px-2 py-0.5 rounded-full">Reconhecimento</span>
+          <span class="bg-amber-50 text-amber-600 text-xs px-2 py-0.5 rounded-full">Pessoas</span>
+          <span class="bg-amber-50 text-amber-600 text-xs px-2 py-0.5 rounded-full">Liberdade</span>
+        </div>
+      </a>
+
+      <!-- S -->
+      <a href="perfis.html#S" class="group bg-white rounded-2xl p-6 border-2 border-transparent hover:border-green-400 shadow-sm hover:shadow-md transition-all cursor-pointer">
+        <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-green-500 transition">
+          <span class="text-3xl font-black text-green-500 group-hover:text-white transition">S</span>
+        </div>
+        <h3 class="font-bold text-gray-900 text-lg mb-1">Estabilidade</h3>
+        <p class="text-gray-500 text-sm mb-4">Paciente, leal, consistente e excelente jogador de equipe.</p>
+        <div class="flex flex-wrap gap-1">
+          <span class="bg-green-50 text-green-600 text-xs px-2 py-0.5 rounded-full">Segurança</span>
+          <span class="bg-green-50 text-green-600 text-xs px-2 py-0.5 rounded-full">Lealdade</span>
+          <span class="bg-green-50 text-green-600 text-xs px-2 py-0.5 rounded-full">Equipe</span>
+        </div>
+      </a>
+
+      <!-- C -->
+      <a href="perfis.html#C" class="group bg-white rounded-2xl p-6 border-2 border-transparent hover:border-blue-400 shadow-sm hover:shadow-md transition-all cursor-pointer">
+        <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-500 transition">
+          <span class="text-3xl font-black text-blue-500 group-hover:text-white transition">C</span>
+        </div>
+        <h3 class="font-bold text-gray-900 text-lg mb-1">Conformidade</h3>
+        <p class="text-gray-500 text-sm mb-4">Analítico, preciso, perfeccionista e orientado a qualidade.</p>
+        <div class="flex flex-wrap gap-1">
+          <span class="bg-blue-50 text-blue-600 text-xs px-2 py-0.5 rounded-full">Precisão</span>
+          <span class="bg-blue-50 text-blue-600 text-xs px-2 py-0.5 rounded-full">Qualidade</span>
+          <span class="bg-blue-50 text-blue-600 text-xs px-2 py-0.5 rounded-full">Perfeição</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- Ideal Leader Banner -->
+  <section class="bg-gray-900 text-white py-16">
+    <div class="max-w-5xl mx-auto px-6 text-center">
+      <p class="text-xs uppercase tracking-widest text-indigo-400 font-semibold mb-4">Perfil Ideal do Líder</p>
+      <h2 class="text-3xl font-black mb-10">Cada perfil contribui com uma dimensão insubstituível</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="bg-white/10 rounded-xl p-5">
+          <span class="text-4xl font-black text-red-400">D</span>
+          <p class="text-sm mt-2 text-gray-300">Foco em resultado e determinação</p>
+        </div>
+        <div class="bg-white/10 rounded-xl p-5">
+          <span class="text-4xl font-black text-amber-400">I</span>
+          <p class="text-sm mt-2 text-gray-300">Relacionamento e paixão</p>
+        </div>
+        <div class="bg-white/10 rounded-xl p-5">
+          <span class="text-4xl font-black text-green-400">S</span>
+          <p class="text-sm mt-2 text-gray-300">Consistência e persistência</p>
+        </div>
+        <div class="bg-white/10 rounded-xl p-5">
+          <span class="text-4xl font-black text-blue-400">C</span>
+          <p class="text-sm mt-2 text-gray-300">A disciplina e a lógica</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Points -->
+  <section class="max-w-4xl mx-auto px-6 py-16">
+    <p class="text-xs uppercase tracking-widest text-gray-400 font-semibold mb-6 text-center">Pontos Fundamentais</p>
+    <div class="space-y-4" id="key-points"></div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-gray-100 py-8 text-center text-sm text-gray-400">
+    Baseado no material <em>Talento para a Vida</em> — Jorge Matos e Vânia Portela · Thomas International
+  </footer>
+
+  <script>
+    const kp = document.getElementById('key-points');
+    KEY_POINTS.forEach((p, i) => {
+      kp.innerHTML += `<div class="flex gap-3 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+        <span class="w-7 h-7 rounded-full bg-indigo-100 text-indigo-600 text-xs font-bold flex-shrink-0 flex items-center justify-center">${i+1}</span>
+        <p class="text-gray-700 text-sm">${p}</p>
+      </div>`;
+    });
+  </script>
+</body>
+</html>
